@@ -3,9 +3,14 @@ package org.MachinaEconomy.ThePrometeus;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Database {
     private Connection conn;
+    private String url;
+    private String username;
+    private String password;
     
     private void createTable() throws SQLException {
         conn.createStatement().executeUpdate(
@@ -28,14 +33,24 @@ public class Database {
      * @return boolean
      */
     public boolean connect(String url, String username, String password) {
+        this.url        = url;
+        this.username   = username;
+        this.password   = password;
+
+        return reconnect() != null;
+    }
+    
+    private Connection reconnect() {
         try {
-            conn        = DriverManager.getConnection(url, username, password);
+            conn        = DriverManager.getConnection(url + "?autoReconnect=true&useSSL=false&characterEncoding=UTF-8", username, password);
             createTable();
-        } catch(SQLException e) {
-            return false;
+            
+            return conn;
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
-  
-        return true;
+        
+        return null;
     }
     
     /**
@@ -43,6 +58,16 @@ public class Database {
      * @return Connection
      */
     public Connection getConnection() {
-        return conn;
+        try {
+            if (conn.isClosed()) {
+                return reconnect();
+            } else {
+                return conn;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+            
+            return reconnect();
+        }
     }
 }
