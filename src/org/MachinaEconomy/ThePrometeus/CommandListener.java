@@ -1,7 +1,6 @@
 package org.MachinaEconomy.ThePrometeus;
 
 import java.util.Map;
-import java.util.UUID;
 import org.MachinaEconomy.ThePrometeus.Entities.MachinaConsoleEntity;
 import org.MachinaEconomy.ThePrometeus.Entities.MachinaPlayerEntity;
 import org.bukkit.ChatColor;
@@ -16,7 +15,7 @@ public class CommandListener implements Listener, CommandExecutor {
     Main plugin;
 
     CommandListener(Main a) {
-        plugin                      = a;
+        plugin = a;
     }
 
     @Override
@@ -27,7 +26,7 @@ public class CommandListener implements Listener, CommandExecutor {
         }
         
         // Create the MachinaEntity
-        Entity e                    = sender instanceof Player ? new MachinaPlayerEntity((Player) sender) : new MachinaConsoleEntity();
+        Entity e = sender instanceof Player ? new MachinaPlayerEntity((Player) sender) : new MachinaConsoleEntity();
         
         // If player sent no arguments, then he
         // maybe wants to know their money.
@@ -37,7 +36,7 @@ public class CommandListener implements Listener, CommandExecutor {
                 return true;
             }
 
-            double amount           = plugin.bank.getMoney(e);
+            double amount = plugin.bank.getMoney(e);
             
             // Send entity a message with the amount
             sender.sendMessage(plugin.formatMessage("selfAmount", plugin.utils.format(amount)));
@@ -59,7 +58,7 @@ public class CommandListener implements Listener, CommandExecutor {
                         return true;
                     }
                     
-                    double amount   = plugin.bank.getMoney(new MachinaPlayerEntity((Player) p));
+                    double amount = plugin.bank.getMoney(new MachinaPlayerEntity((Player) p));
             
                     // Send entity a message with the amount
                     sender.sendMessage(plugin.formatMessage("playerAmount", p.getName(), plugin.utils.format(amount)));
@@ -80,10 +79,10 @@ public class CommandListener implements Listener, CommandExecutor {
                         return true;
                     }
 
-                    double amount       = Double.parseDouble(args[2]);
+                    double amount = Double.parseDouble(args[2]);
 
                     // Get offline player
-                    OfflinePlayer p     = plugin.getServer().getOfflinePlayer(args[1]);
+                    OfflinePlayer p = plugin.getServer().getOfflinePlayer(args[1]);
 
                     // Check if offline player has played before
                     if (!p.isOnline() && !p.hasPlayedBefore()) {
@@ -107,7 +106,7 @@ public class CommandListener implements Listener, CommandExecutor {
                     plugin.bank.adjustMoney(new MachinaPlayerEntity((Player) sender), amount * -1);
 
                     // Do the operation
-                    double newAmount    = plugin.bank.adjustMoney(new MachinaPlayerEntity(p.getPlayer()), amount);
+                    double newAmount = plugin.bank.adjustMoney(new MachinaPlayerEntity(p.getPlayer()), amount);
                     
                     // Alert the sender
                     sender.sendMessage(plugin.formatMessage("transactionSent", amount, p.getName()));
@@ -128,14 +127,14 @@ public class CommandListener implements Listener, CommandExecutor {
                         return true;
                     }
                     
-                    int page                    = 1;  
+                    int page = 1;  
 
                     // Check if has enough arguments
                     if (args.length == 2) {
-                        page                    = Integer.parseInt(args[1]);
+                        page = Integer.parseInt(args[1]);
                     }
                     
-                    Map<String, Integer> top10  = plugin.bank.getTop10(page);
+                    Map<String, Integer> top10 = plugin.bank.getTop10(page);
 
                     // Send the header
                     sender.sendMessage(plugin.formatMessage("top10Header", page));
@@ -162,7 +161,7 @@ public class CommandListener implements Listener, CommandExecutor {
                         return true;
                     }
                     
-                    double amount       = Double.parseDouble(args[2]);
+                    double amount = Double.parseDouble(args[2]);
 
                     // Get offline player
                     OfflinePlayer p = plugin.getServer().getOfflinePlayer(args[1]);
@@ -180,7 +179,7 @@ public class CommandListener implements Listener, CommandExecutor {
                     }
 
                     // Do the operation
-                    double newAmount    = plugin.bank.setMoney(new MachinaPlayerEntity(p.getPlayer()), amount);
+                    double newAmount = plugin.bank.setMoney(new MachinaPlayerEntity(p.getPlayer()), amount);
 
                     // Alert the sender
                     sender.sendMessage(plugin.formatMessage("adjustSent", newAmount, p.getName()));
@@ -188,7 +187,7 @@ public class CommandListener implements Listener, CommandExecutor {
                     // Check if receiver player is online
                     if (p.isOnline()) {
                         // Alertt him
-                        p.getPlayer().sendMessage(plugin.formatMessage("adjustReceived", p.getName(), amount));
+                        p.getPlayer().sendMessage(plugin.formatMessage("adjustReceived", sender.getName(), amount));
                     }
                 }
                 

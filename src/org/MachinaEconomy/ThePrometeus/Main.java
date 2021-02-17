@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.UUID;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.MachinaEconomy.ThePrometeus.Entities.MachinaPlayerEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -20,10 +20,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Main extends JavaPlugin {
     public final FileConfiguration language = new YamlConfiguration();
-    private final CommandListener cmd       = new CommandListener(this);
-    public Bank bank                        = new Bank(this);
-    public Database db                      = new Database();
-    public Utils utils                      = new Utils(this);
+    private final CommandListener cmd = new CommandListener(this);
+    public Bank bank = new Bank(this);
+    public Database db = new Database();
+    public Utils utils = new Utils(this);
 
     /**
      * Set configuration defaults
@@ -38,7 +38,7 @@ public class Main extends JavaPlugin {
         getConfig().addDefault("currency.sign", "$");
         getConfig().addDefault("currency.defaultAmount", 30);
 
-        getConfig().addDefault("connection.uri", "jdbc://localhost/minecraft");
+        getConfig().addDefault("connection.uri", "jdbc:mysql://localhost/minecraft");
         getConfig().addDefault("connection.username", "root");
         getConfig().addDefault("connection.password", "");
 
@@ -70,11 +70,14 @@ public class Main extends JavaPlugin {
         getLanguage().options().copyDefaults(true);
     }
     
-    public void loadConfig() {
+    /**
+     * Try loading the plugin language configuration
+     */
+    public void loadLanguage() {
         try {
             language.load(getDataFolder().getAbsolutePath() + File.separator + "language.yml");
-        } catch (Exception ex) {
-            getLogger().log(Level.SEVERE, (Supplier<String>) ex.fillInStackTrace());
+        } catch (IOException | InvalidConfigurationException ex) {
+
         }
     }
     
@@ -97,7 +100,7 @@ public class Main extends JavaPlugin {
         setDefaults();
         
         // Load config
-        loadConfig();
+        loadLanguage();
 
         getLogger().info("Config file loaded");
 
@@ -106,33 +109,44 @@ public class Main extends JavaPlugin {
         
         if (!db.connect(getConfig().getString("connection.uri"), getConfig().getString("connection.username"), getConfig().getString("connection.password"))) {
             getLogger().log(Level.SEVERE, "Can't connect to MySQL server.");
+            this.setEnabled(false);
+            return;
         } else {
             getLogger().info("Connected to MySQL.");
         }
         
-        final Main m                = this;
+        final Main m = this;
         
-        BukkitRunnable runnable     = new BukkitRunnable() {
+        BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
                 getLogger().info("Hooking into Vault...");
 
-                Plugin Vault        = Bukkit.getPluginManager().getPlugin("Vault");
+                // Try retrieving the Vault plugin
+                Plugin Vault = Bukkit.getPluginManager().getPlugin("Vault");
                 
+                // Check if Vault is not loaded
                 if (Vault == null) {
-                    throw new Error("Vault is not loaded. Aborting.");
+                    getLogger().severe("Vault not found, turning the plugin off...");
+
+                    // Disable the plugin
+                    m.getServer().getPluginManager().disablePlugin(m);
+                    return;
                 }
 
-                ServicesManager sm  = Bukkit.getServicesManager();
+                ServicesManager sm = Bukkit.getServicesManager();
 
                 // Create a new Vault connection
                 sm.register(net.milkbowl.vault.economy.Economy.class, new VaultEconomy(m), m, ServicePriority.Highest);
 
-                getLogger().info("Vault hook successful.");
+                getLogger().info("Vault hook succeeded");
             }
         };
 
         runnable.runTaskLater(this, 1L);
+        
+        // Save the configuration
+        saveConfig();
 
         getLogger().info("Enabled and ready to hook.");
     }

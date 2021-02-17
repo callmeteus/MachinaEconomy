@@ -12,6 +12,10 @@ public class Database {
     private String username;
     private String password;
     
+    /**
+     * Creates the plugin MySQL table
+     * @throws SQLException 
+     */
     private void createTable() throws SQLException {
         conn.createStatement().executeUpdate(
             "CREATE TABLE IF NOT EXISTS `machina_economy` (" +
@@ -33,16 +37,20 @@ public class Database {
      * @return boolean
      */
     public boolean connect(String url, String username, String password) {
-        this.url        = url;
-        this.username   = username;
-        this.password   = password;
+        this.url = url;
+        this.username = username;
+        this.password = password;
 
         return reconnect() != null;
     }
     
+    /**
+     * Create a connection to a MySQL server
+     * @return Connection
+     */
     private Connection reconnect() {
         try {
-            conn        = DriverManager.getConnection(url + "?autoReconnect=true&useSSL=false&characterEncoding=UTF-8", username, password);
+            conn = DriverManager.getConnection(url + "?autoReconnect=true&useSSL=false&characterEncoding=UTF-8", username, password);
             createTable();
             
             return conn;
@@ -54,7 +62,7 @@ public class Database {
     }
     
     /**
-     * Return the database connection
+     * Returns an active database connection
      * @return Connection
      */
     public Connection getConnection() {

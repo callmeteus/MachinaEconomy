@@ -1,5 +1,5 @@
 name: MachinaEconomy
-version: 1.0
+version: 1.0.1
 main: org.MachinaEconomy.ThePrometeus.Main
 author: ThePrometeus
 depend: [Vault]

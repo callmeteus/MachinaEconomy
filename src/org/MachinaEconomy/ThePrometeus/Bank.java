@@ -11,7 +11,7 @@ class Bank {
     private final Main plugin;
 
     public Bank(Main main) {
-        this.plugin                     = main;
+        this.plugin = main;
     }
     
      /**
@@ -22,7 +22,7 @@ class Bank {
     public boolean createAccount(Entity e) {
         try {
             // Prepare the statement
-            PreparedStatement stmt      = plugin.db.getConnection().prepareStatement("INSERT INTO machina_economy SET uuid = ?, name = ?, amount = ?");
+            PreparedStatement stmt = plugin.db.getConnection().prepareStatement("INSERT INTO machina_economy SET uuid = ?, name = ?, amount = ?");
 
             stmt.setBytes(1, e.getHexUUID());
             stmt.setString(2, e.getName());
@@ -59,12 +59,12 @@ class Bank {
     public boolean accountExists(Entity e) {
         try {
             // Query for player account
-            PreparedStatement stmt      = plugin.db.getConnection().prepareStatement("SELECT 1 FROM machina_economy WHERE uuid = ? OR name = ?");
+            PreparedStatement stmt = plugin.db.getConnection().prepareStatement("SELECT 1 FROM machina_economy WHERE uuid = ? OR name = ?");
 
             stmt.setBytes(1, e.getHexUUID());
             stmt.setString(2, e.getName());
 
-            ResultSet res               = stmt.executeQuery();
+            ResultSet res = stmt.executeQuery();
 
             // Check if has any result
             if (res.next()) {
@@ -86,12 +86,12 @@ class Bank {
     public boolean hasMoreThan(Entity e, double amount) {
         try {
             // Query for player account
-            PreparedStatement stmt      = plugin.db.getConnection().prepareStatement("SELECT amount FROM machina_economy WHERE uuid = ? OR name = ?");
+            PreparedStatement stmt = plugin.db.getConnection().prepareStatement("SELECT amount FROM machina_economy WHERE uuid = ? OR name = ?");
 
             stmt.setBytes(1, e.getHexUUID());
             stmt.setString(2, e.getName());
 
-            ResultSet res               = stmt.executeQuery();
+            ResultSet res = stmt.executeQuery();
 
             // Check if has any result
             if (res.next()) {
@@ -112,12 +112,12 @@ class Bank {
     public double getMoney(Entity e) {
         try {
             // Query for player account
-            PreparedStatement stmt      = plugin.db.getConnection().prepareStatement("SELECT amount FROM machina_economy WHERE uuid = ? OR name = ?");
+            PreparedStatement stmt = plugin.db.getConnection().prepareStatement("SELECT amount FROM machina_economy WHERE uuid = ? OR name = ?");
 
             stmt.setBytes(1, e.getHexUUID());
             stmt.setString(2, e.getName());
 
-            ResultSet res               = stmt.executeQuery();
+            ResultSet res = stmt.executeQuery();
 
             // Check if has any result
             if (res.next()) {
@@ -144,13 +144,13 @@ class Bank {
     public double adjustMoney(Entity e, double amount) {
         try {
             // Query for player account
-            PreparedStatement stmt  = plugin.db.getConnection().prepareStatement("UPDATE machina_economy SET amount = amount + ? WHERE uuid = ? OR name = ?");
+            PreparedStatement stmt = plugin.db.getConnection().prepareStatement("UPDATE machina_economy SET amount = amount + ? WHERE uuid = ? OR name = ?");
 
             stmt.setDouble(1, amount);
             stmt.setBytes(2, e.getHexUUID());
             stmt.setString(3, e.getName());
 
-            int res                     = stmt.executeUpdate();
+            int res = stmt.executeUpdate();
 
             // Check if has any result
             if (res > 0) {
@@ -173,17 +173,17 @@ class Bank {
      * @return New account balance
      */
     public double setMoney(Entity e, double amount) {
-        amount                          = Math.max(amount, 0);
+        amount = Math.max(amount, 0);
         
         try {
             // Query for player account
-            PreparedStatement stmt      = plugin.db.getConnection().prepareStatement("UPDATE machina_economy SET amount = ? WHERE uuid = ? OR name = ?");
+            PreparedStatement stmt = plugin.db.getConnection().prepareStatement("UPDATE machina_economy SET amount = ? WHERE uuid = ? OR name = ?");
 
             stmt.setDouble(1, amount);
             stmt.setBytes(2, e.getHexUUID());
             stmt.setString(3, e.getName());
 
-            int res                     = stmt.executeUpdate();
+            int res = stmt.executeUpdate();
 
             // Check if has any result
             if (res > 0) {
@@ -204,19 +204,19 @@ class Bank {
      * @return Map<PlayerName, Balance> 
      */
     public Map<String, Integer> getTop10(int page) {
-        Map<String, Integer> ret        = new HashMap<>();
+        Map<String, Integer> ret = new HashMap<>();
         
         page--;
 
         try {
             // Query for player account
-            PreparedStatement stmt      = plugin.db.getConnection().prepareStatement("SELECT name, amount FROM machina_economy ORDER BY amount DESC LIMIT ?,?");
+            PreparedStatement stmt = plugin.db.getConnection().prepareStatement("SELECT name, amount FROM machina_economy ORDER BY amount DESC LIMIT ?,?");
 
             stmt.setInt(1, page * 10);
             stmt.setInt(2, 10);
 
             // Get query result
-            ResultSet res               = stmt.executeQuery();
+            ResultSet res = stmt.executeQuery();
             
             while(res.next()) {
                 ret.put(res.getString("name"), res.getInt("amount"));

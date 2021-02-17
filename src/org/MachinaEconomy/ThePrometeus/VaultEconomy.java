@@ -1,7 +1,6 @@
 package org.MachinaEconomy.ThePrometeus;
 
 import java.util.List;
-import java.util.logging.Level;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
@@ -12,7 +11,7 @@ public class VaultEconomy implements Economy {
     private final Main plugin;
     
     public VaultEconomy(Main m) {
-        plugin                  = m;
+        plugin = m;
     }   
 
     @Override
@@ -82,14 +81,14 @@ public class VaultEconomy implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double d) {
-        Entity e            = plugin.entityFromName(playerName);
+        Entity e = plugin.entityFromName(playerName);
 
         if (d < 0) {
             return new EconomyResponse(0, 0, ResponseType.FAILURE, "Cannot withdraw negative funds.");
         }
         
         // Process new player amount
-        double newAmount    = plugin.bank.adjustMoney(e, d * -1);
+        double newAmount = plugin.bank.adjustMoney(e, d * -1);
 
         // Check if operation succeeded
         if (newAmount > -1) {
@@ -106,14 +105,14 @@ public class VaultEconomy implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(String playerName, double d) {
-        Entity e            = plugin.entityFromName(playerName);
+        Entity e = plugin.entityFromName(playerName);
 
         if (d < 0) {
             return new EconomyResponse(0, 0, ResponseType.FAILURE, "Cannot deposit negative funds.");
         }
 
         // Process new player amount
-        double newAmount    = plugin.bank.adjustMoney(e, d);
+        double newAmount = plugin.bank.adjustMoney(e, d);
 
         // Check if operation succeeded
         if (newAmount > -1) {
@@ -215,14 +214,14 @@ public class VaultEconomy implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer op, double d) {
-        Entity e             = new MachinaOfflinePlayerEntity(op);
+        Entity e = new MachinaOfflinePlayerEntity(op);
 
         if (d < 0) {
             return new EconomyResponse(0, 0, ResponseType.FAILURE, "Cannot withdraw negative funds.");
         }
         
         // Process new player amount
-        double newAmount    = plugin.bank.adjustMoney(e, d * -1);
+        double newAmount = plugin.bank.adjustMoney(e, d * -1);
 
         // Check if operation succeeded
         if (newAmount > -1) {
@@ -239,14 +238,14 @@ public class VaultEconomy implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer op, double d) {
-        Entity e             = new MachinaOfflinePlayerEntity(op);
+        Entity e = new MachinaOfflinePlayerEntity(op);
 
         if (d < 0) {
             return new EconomyResponse(0, 0, ResponseType.FAILURE, "Cannot deposit negative funds.");
         }
         
         // Process new player amount
-        double newAmount    = plugin.bank.adjustMoney(e, d);
+        double newAmount = plugin.bank.adjustMoney(e, d);
 
         // Check if operation succeeded
         if (newAmount > -1) {

@@ -18,14 +18,14 @@ public class Utils {
      * @return String
      */
     public String format(double amount) {
-        double decimals  = this.getDecimals(amount);
+        double decimals = this.getDecimals(amount);
         
         String f;
 
         if (decimals == 0) {
-            f           = plugin.getConfig().getString("currency.name");
+            f = plugin.getConfig().getString("currency.name");
         } else {
-            f           = plugin.getConfig().getString("currency.namePlural");
+            f = plugin.getConfig().getString("currency.namePlural");
         }
 
         return amount + " " + f;

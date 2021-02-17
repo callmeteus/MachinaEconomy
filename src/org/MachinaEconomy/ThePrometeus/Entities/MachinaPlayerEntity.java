@@ -8,7 +8,7 @@ public class MachinaPlayerEntity extends Entity {
     private final Player player;
 
     public MachinaPlayerEntity(Player p) {
-        player  = p;
+        player = p;
     }
 
     @Override
